@@ -1,9 +1,7 @@
-# learning_twitter
-Machine Learning Experiment with Twitter
-
+# Learning Twitter
 Experiment into teaching a machine how to Twitter. 
 
-Todo: </br>
-1. Get Data </br>
-2. Python ingestion script </br>
-3. Python learning script </br>
+Todo: 
+* Get Data 
+* Python ingestion script
+* Python learning script 
