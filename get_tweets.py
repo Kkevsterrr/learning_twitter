@@ -26,6 +26,10 @@ def main():
     nicePrint.pprint(user_info_dict)
     #^isplay user info
 
+    print '\n'
+    current_tweets = api.GetHomeTimeline()
+    nicePrint.pprint([s.AsDict() for s in current_tweets])
+    #^gets all current tweets in timeline(home page), and prints it all out in dicts 
 
 
 
