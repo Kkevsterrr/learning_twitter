@@ -63,8 +63,8 @@ def pull():
 def search():
     try:
         tso = TwitterSearchOrder() # create a TwitterSearchOrder object
-        tso.set_keywords([' ']) # let's define all words we would like to have a look for
-        tso.set_language('en') # we want to see German tweets only
+        tso.set_keywords([' ']) # let's define all search keywords - now, we want all tweets with a space in them
+        tso.set_language('en') # we want to see english tweets only
         tso.set_include_entities(False) # and don't give us all those entity information
         ts = TwitterSearch(consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ',
                       consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc',
@@ -73,7 +73,7 @@ def search():
         for tweet in ts.search_tweets_iterable(tso):
             #if (tweet['retweet_count'] != 0):
             print( '%s: @%s tweeted: %s' % ( tweet['retweet_count'], tweet['user']['screen_name'], tweet['text'] ) )
-
+            # print # of retweents, tweeter, and content of tweet
     except TwitterSearchException as e: # take care of all those ugly errors if there are some
         print(e)
 
