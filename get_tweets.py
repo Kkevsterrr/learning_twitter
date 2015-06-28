@@ -1,12 +1,16 @@
 #!/usr/bin/env python
-from __future__ import unicode_literals
-from tweepy.streaming import StreamListener
-from tweepy import OAuthHandler
-from tweepy import Stream
-import json
-import sys
-from TwitterSearch import *
+from __future__ import unicode_literals #this needs to be here
 
+def module_exists(module_name):
+        '''function to check if an import exists'''
+        try:
+            __import__(module_name)
+        except ImportError:
+            return False
+        else:
+            return True
+####NOT TWEET_LEARN RELATED ABOVE####
+'''class is not defined!!!!
 class StdOutListener(StreamListener):
 
     def on_data(self, data):
@@ -19,15 +23,9 @@ class StdOutListener(StreamListener):
 
     def on_error(self, status):
         print status
+'''
 
-def module_exists(module_name):
-    '''function to check if an import exists'''
-    try:
-        __import__(module_name)
-    except ImportError:
-        return False
-    else:
-        return True
+        
 def stream():
     consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ'
     consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc'
@@ -78,8 +76,8 @@ def search():
         print(e)
 
 def main():
-    #pull()
-    search() 
+    pull()
+    #search() 
     #stream()
     
 
@@ -87,37 +85,57 @@ def main():
 if __name__ == "__main__":
     #^This should be the first thing that is checked in the program
 
-    #docs and stuff https://github.com/bear/python-twitter
-
     import collections
     import re
     from pprint import PrettyPrinter
+    import json
+    import sys
     #^default imports that should come with python
 
-    if not module_exists('twitter'):
+    Requirements = ['tweepy','TwitterSearch','python-twitter']#add import requirements here
 
-        #PROMPT THE USER TO AUTO DOWNLOAD THE RIGHT PACKAGE
-        print "You do not have the twitter-python module required to run this program."
+    imported = False #Import flag to make sure things are import correctly
+    installed = False #Installed flag to make sure things are installed
 
-        answer = raw_input("May I install it for you (Y/N)")
-        while answer.lower() != 'y' or answer.lower() != 'n':#correct 'Y','N','YES','NO'
-            print "I don't undestand"
-            answer = raw_input("May I install it for you (Y/N)")
+    while not imported:
+        try:#tries to import the necessary stuff you want
+            
+            from tweepy.streaming import StreamListener
+            from tweepy import OAuthHandler
+            from tweepy import Stream
+            from TwitterSearch import *
+            import twitter
+            #put what you want imported and stuff here
+            #MAKE SURE TO ADD TO REQUIREMENTS
 
-        if answer[0].lower() == 'y':
-            print "Installing Package"
-            if module_exists(pip):
-                import pip
-                pip.main('install','python-twitter')
+            imported = True #at this point everything should be imported
+        except:#UH-OH something isn't downloaded!!! Time to check requirements
+            if not installed:
+                import os, pip #stuff to import more stuff
+                
+                pip_args = [ '-vvv' ]#gives uber output also creating pip command
+                pip_args.append('install')#install command
+                for req in Requirements: #adds the requirements
+                    pip_args.append( req )
+
+                print "You do not have the proper modules needed."
+                print "May I install them?"
+
+                answer = str(raw_input(">>> ")).lower()
+                while answer != 'y' and answer != 'n':
+                    print "I don't undestand"
+                    answer = str(raw_input("May I install it for you (Y/N)\n>>> ")).lower()
+
+                if answer[0].lower() == 'y':
+                    print('Installing requirements: ' + str(Requirements))
+                    if pip.main(pip_args) == 0:
+                        installed = True
+                    else:
+                        break
             else:
-                print "Pip is not installed, install pip to download packages"
-
-    if module_exists('twitter'):
-        import twitter
+                break
+            
+    if imported:
         main()
-
-
-
-
-
-
+    else:
+        print "Invalid Import or requirement listed"
