@@ -52,13 +52,14 @@ def pull():
 
     nicePrint.pprint(user_info_dict)
     #^isplay user info
-    print '\n'
+    print('\n')
        
 
     current_tweets = api.GetHomeTimeline()
     nicePrint.pprint([s.AsDict() for s in current_tweets])
     #^gets all current tweets in timeline(home page), and prints it all out in dicts 
 def search():
+    tw = []
     try:
         tso = TwitterSearchOrder() # create a TwitterSearchOrder object
         tso.set_keywords([' ']) # let's define all search keywords - now, we want all tweets with a space in them
@@ -68,19 +69,70 @@ def search():
                       consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc',
                       access_token = '700001043-oxm3LZ72y4WmWGRqY66QjV0SzZoHGy5OGgwic26M',
                       access_token_secret = 'hGJZWTb5bjGFSiuIQrff5UajKdlyXcp7Lyun5SJzq05Su')
+        i = 0
         for tweet in ts.search_tweets_iterable(tso):
             #if (tweet['retweet_count'] != 0):
-            print( '%s: @%s tweeted: %s' % ( tweet['retweet_count'], tweet['user']['screen_name'], tweet['text'] ) )
+            tw.append((len(tweet['text']), tweet['retweet_count']))
+            #print(str(i))
+            #backspace(len(str(i)))
+            if i == 99:
+                break
+            i += 1
+        return tw
+            #print tw
+            #print( '%s: @%s tweeted: %s' % ( tweet['retweet_count'], tweet['user']['screen_name'], tweet['text'] ) )
             # print # of retweents, tweeter, and content of tweet
     except TwitterSearchException as e: # take care of all those ugly errors if there are some
         print(e)
 
 def main():
-    pull()
-    #search() 
+    #pull()
+    tw = search() 
     #stream()
+    diabetes = datasets.load_diabetes()
+    diabetes_X = diabetes.data[:, np.newaxis]
+    tw = zip(*tw)
+    print diabetes.data
+    print diabetes.target
+    regr = linear_model.LinearRegression()
+    learning_X = tw[0]
+    learning_X_temp = tw[0][::2] #<----- same data
     
+    learning_Y = tw[1]
+    learning_Y_temp = tw[1][::2] #<-----  same data
 
+    regr = linear_model.LinearRegression()
+    learning_X_train = learning_X_temp[:-20] #<------
+    learning_X_test = learning_X_temp[-20:]
+    print learning_X_train
+    learning_X_train = [tuple(i) for i in learning_X_train]
+
+    # Split the targets into training/testing sets
+    learning_y_train = learning_Y_temp[:-20] #<--- train on the first 20
+    learning_y_test =  learning_Y_temp[-20:] #<--- test myself on the last 20 (TWEET_SIZE, RETWEETS)
+     
+    print len(learning_X_train)
+    print len(learning_y_train)
+    regr.fit(learning_X_train, learning_y_train)
+
+   
+    # The coefficients
+    print('Coefficients: \n', regr.coef_)
+    # The mean square error
+    print("Residual sum of squares: %.2f"
+      % np.mean((regr.predict(diabetes_X_test) - diabetes_y_test) ** 2))
+    # Explained variance score: 1 is perfect prediction
+    print('Variance score: %.2f' % regr.score(diabetes_X_test, diabetes_y_test))
+
+    # Plot outputs
+    plt.scatter(diabetes_X_test, diabetes_y_test,  color='black')
+    plt.plot(diabetes_X_test, regr.predict(diabetes_X_test), color='blue',
+         linewidth=3)
+
+    plt.xticks(())
+    plt.yticks(())
+
+    plt.show() 
 
 if __name__ == "__main__":
     #^This should be the first thing that is checked in the program
@@ -92,7 +144,7 @@ if __name__ == "__main__":
     import sys
     #^default imports that should come with python
 
-    Requirements = ['tweepy','TwitterSearch','python-twitter']#add import requirements here
+    Requirements = ['tweepy','TwitterSearch','python-twitter', 'scikit-learn', 'numpy', 'Matplotlib']#add import requirements here
 
     imported = False #Import flag to make sure things are import correctly
     installed = False #Installed flag to make sure things are installed
@@ -104,6 +156,9 @@ if __name__ == "__main__":
             from tweepy import OAuthHandler
             from tweepy import Stream
             from TwitterSearch import *
+            import matplotlib.pyplot as plt
+            import numpy as np
+            from sklearn import datasets, linear_model
             import twitter
             #put what you want imported and stuff here
             #MAKE SURE TO ADD TO REQUIREMENTS
@@ -118,12 +173,12 @@ if __name__ == "__main__":
                 for req in Requirements: #adds the requirements
                     pip_args.append( req )
 
-                print "You do not have the proper modules needed."
-                print "May I install them?"
+                print("You do not have the proper modules needed.")
+                print("May I install them?")
 
                 answer = str(raw_input(">>> ")).lower()
                 while answer != 'y' and answer != 'n':
-                    print "I don't undestand"
+                    print("I don't undestand")
                     answer = str(raw_input("May I install it for you (Y/N)\n>>> ")).lower()
 
                 if answer[0].lower() == 'y':
@@ -138,4 +193,4 @@ if __name__ == "__main__":
     if imported:
         main()
     else:
-        print "Invalid Import or requirement listed"
+        print("Invalid Import or requirement listed")
