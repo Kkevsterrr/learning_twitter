@@ -12,7 +12,6 @@ def module_exists(module_name):
 ####NOT TWEET_LEARN RELATED ABOVE####
 '''class is not defined!!!!
 class StdOutListener(StreamListener):
-
     def on_data(self, data):
         d = json.loads(data)
         retweets = d.get("retweet_count")
@@ -20,7 +19,6 @@ class StdOutListener(StreamListener):
         print d.get("text")
         #print d.get("retweet_count") 
         return True
-
     def on_error(self, status):
         print status
 '''
@@ -177,20 +175,26 @@ if __name__ == "__main__":
                 print("May I install them? (y/n)")
 
                 answer = str(raw_input(">>> ")).lower()
-                while answer != 'y' and answer != 'n':
+                while (answer != 'y') and (answer != 'n'):
                     print("I don't undestand")
                     answer = str(raw_input("May I install it for you (Y/N)\n>>> ")).lower()
 
                 if answer[0].lower() == 'y':
                     print('Installing requirements: ' + str(Requirements) + "and scipy")
 
-                    if pip.main(['-v','install','-Iv','http://sourceforge.net/projects/scipy/files/scipy/0.16.0b2/scipy-0.16.0b2-win32-superpack-python2.7.exe/download/']) == 0:
-                        if pip.main(pip_args) == 0:
-                            installed = True
-                        elif easy_install.main(['-U',pip_args[-1]]):
-                            installed = True
+                    pip.main(['install','--upgrade', 'pip'])
+
+                    if module_exists('scipy'):
+                        if pip.main(['-v','install','-Iv','http://sourceforge.net/projects/scipy/files/scipy/0.16.0b2/scipy-0.16.0b2-win32-superpack-python2.7.exe/download']) == 0:                
+                            None
+                    if pip.main(pip_args) == 0:
+                        installed = True
+                    elif easy_install.main(['-U',pip_args[-1]]):
+                        installed = True
                     else:
                         break
+                else:
+                    break
             else:
                 break
             
