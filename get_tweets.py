@@ -75,10 +75,10 @@ def search():
         i = 0
         for tweet in ts.search_tweets_iterable(tso):
             #if (tweet['retweet_count'] != 0):
-            tw.append((len(tweet['text']), tweet['retweet_count']))
+            tw.append((len(tweet['text'].split()), tweet['retweet_count']))
             #print(str(i))
             #backspace(len(str(i)))
-            if i == 99:
+            if i == 300:
                 break
             i += 1
         return tw
@@ -184,12 +184,12 @@ if __name__ == "__main__":
 
                     pip.main(['install','--upgrade', 'pip'])
 
-                    if module_exists('scipy'):
-                        if pip.main(['-v','install','-Iv','http://sourceforge.net/projects/scipy/files/scipy/0.16.0b2/scipy-0.16.0b2-win32-superpack-python2.7.exe/download']) == 0:                
-                            None
+                    if not module_exists('scipy'):
+                        print 'need scipy to continue. Get at'
+                        print 'http://sourceforge.net/projects/scipy/files/scipy/0.15.0/scipy-0.15.0-win32-superpack-python2.7.exe/download'
                     if pip.main(pip_args) == 0:
                         installed = True
-                    elif easy_install.main(['-U',pip_args[-1]]):
+                    elif easy_install.main(['-U',pip_args]):
                         installed = True
                     else:
                         break
