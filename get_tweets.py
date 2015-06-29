@@ -22,78 +22,7 @@ class StdOutListener(StreamListener):
     def on_error(self, status):
         print status
 '''
-
-        
-def stream():
-
-    consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ'
-    consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc'
-    access_token = '700001043-oxm3LZ72y4WmWGRqY66QjV0SzZoHGy5OGgwic26M'
-    access_token_secret = 'hGJZWTb5bjGFSiuIQrff5UajKdlyXcp7Lyun5SJzq05Su'
-    
-
-    l = StdOutListener()
-    auth = OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    stream = Stream(auth, l)
-    stream.filter(locations=[-180,-90,180,90],languages = ['en'])
-
-def pull():
-
-    nicePrint = PrettyPrinter(indent=2, width=70)
-    api = twitter.Api(consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ',
-                      consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc',
-                      access_token_key = '700001043-oxm3LZ72y4WmWGRqY66QjV0SzZoHGy5OGgwic26M',
-                      access_token_secret = 'hGJZWTb5bjGFSiuIQrff5UajKdlyXcp7Lyun5SJzq05Su')
-
-    #^Using twitter library we verify the app through the REST API with these keys
-    
-    user_info_dict = api.VerifyCredentials().AsDict()
-    #^Gets my info as a dictonary
-
-    nicePrint.pprint(user_info_dict)
-    #^isplay user info
-    print('\n')
-       
-
-    current_tweets = api.GetHomeTimeline()
-    nicePrint.pprint([s.AsDict() for s in current_tweets])
-    #^gets all current tweets in timeline(home page), and prints it all out in dicts
-
-def search():
-
-    tw = []
-    try:
-        tso = TwitterSearchOrder() # create a TwitterSearchOrder object
-        tso.set_keywords([' ']) # let's define all search keywords - now, we want all tweets with a space in them
-        tso.set_language('en') # we want to see english tweets only
-        tso.set_include_entities(False) # and don't give us all those entity information
-        ts = TwitterSearch(consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ',
-                      consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc',
-                      access_token = '700001043-oxm3LZ72y4WmWGRqY66QjV0SzZoHGy5OGgwic26M',
-                      access_token_secret = 'hGJZWTb5bjGFSiuIQrff5UajKdlyXcp7Lyun5SJzq05Su')
-        i = 0
-        for tweet in ts.search_tweets_iterable(tso):
-            #if (tweet['retweet_count'] != 0):
-            tw.append((len(tweet['text'].split()), tweet['retweet_count']))
-            #print(str(i))
-            #backspace(len(str(i)))
-            if i == 300:
-                break
-            i += 1
-        return tw
-            #print tw
-            #print( '%s: @%s tweeted: %s' % ( tweet['retweet_count'], tweet['user']['screen_name'], tweet['text'] ) )
-            # print # of retweents, tweeter, and content of tweet
-    except TwitterSearchException as e: # take care of all those ugly errors if there are some
-        print(e)
-
-def main():
-
-    #pull()
-    tw = search() 
-    #stream()
-
+def regression(data):
     tw = zip(*tw)
 
     learning_X = tw[0]
@@ -128,7 +57,121 @@ def main():
     plt.xticks(())
     plt.yticks(())
 
-    plt.show() 
+    plt.show()
+        
+def stream():
+
+    consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ'
+    consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc'
+    access_token = '700001043-oxm3LZ72y4WmWGRqY66QjV0SzZoHGy5OGgwic26M'
+    access_token_secret = 'hGJZWTb5bjGFSiuIQrff5UajKdlyXcp7Lyun5SJzq05Su'
+    
+
+    l = StdOutListener()
+    auth = OAuthHandler(consumer_key, consumer_secret)
+    auth.set_access_token(access_token, access_token_secret)
+    stream = Stream(auth, l)
+    stream.filter(locations=[-180,-90,180,90],languages = ['en'])
+
+def pull():
+
+    nicePrint = PrettyPrinter(indent=2, width=70)
+    api = twitter.Api(consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ',
+                      consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc',
+                      access_token_key = '700001043-oxm3LZ72y4WmWGRqY66QjV0SzZoHGy5OGgwic26M',
+                      access_token_secret = 'hGJZWTb5bjGFSiuIQrff5UajKdlyXcp7Lyun5SJzq05Su')
+
+    #^Using twitter library we verify the app through the REST API with these keys
+    
+    user_info_dict = api.VerifyCredentials().AsDict()
+    #^Gets my info as a dictonary
+
+    #nicePrint.pprint(user_info_dict)
+    #^isplay user info
+    print('\n')
+       
+
+    current_tweets = api.GetHomeTimeline()
+    current_tweets = [s.AsDict() for s in current_tweets]
+
+    return current_tweets
+    
+    #nicePrint.pprint([s.AsDict() for s in current_tweets])
+    #^gets all current tweets in timeline(home page), and prints it all out in dicts
+
+    return 
+    
+def search():
+
+    tw = []
+    try:
+        tso = TwitterSearchOrder() # create a TwitterSearchOrder object
+        tso.set_keywords([' ']) # let's define all search keywords - now, we want all tweets with a space in them
+        tso.set_language('en') # we want to see english tweets only
+        tso.set_include_entities(False) # and don't give us all those entity information
+        ts = TwitterSearch(consumer_key = 'zg9yQTGTT2oizk3XLMHGLzfpJ',
+                      consumer_secret = 'nmiwqRpWDX0oxTCUTro8sPeUVUXIZHW9O1VZcTb0mLyfHw51sc',
+                      access_token = '700001043-oxm3LZ72y4WmWGRqY66QjV0SzZoHGy5OGgwic26M',
+                      access_token_secret = 'hGJZWTb5bjGFSiuIQrff5UajKdlyXcp7Lyun5SJzq05Su')
+        i = 0
+        for tweet in ts.search_tweets_iterable(tso):
+            #if (tweet['retweet_count'] != 0):
+            #tw.append((len(tweet['text'].split()), tweet['retweet_count']))
+            #print(str(i))
+            #backspace(len(str(i)))
+            tw.append(tweet)
+            if i == 300:
+                break
+            i += 1
+        return tw
+            #print tw
+            #print( '%s: @%s tweeted: %s' % ( tweet['retweet_count'], tweet['user']['screen_name'], tweet['text'] ) )
+            # print # of retweents, tweeter, and content of tweet
+    except TwitterSearchException as e: # take care of all those ugly errors if there are some
+        print(e)
+
+def main():
+    nicePrint = PrettyPrinter(indent=2, width=70)
+
+    tw = [None]
+    #tw = pull()
+    tw = search() 
+    #stream()
+    
+    nicePrint.pprint(tw[0])
+
+    tweet=tw[0]
+
+    text = tweet['text']
+    analysis = twitter.parse_tweet.ParseTweet(tweet['user']['name'], text)
+
+    try:
+        # UCS-4
+        highpoints = re.compile(u'[\U00010000-\U0010ffff]')
+    except re.error:
+        # UCS-2
+        highpoints = re.compile(u'[\uD800-\uDBFF][\uDC00-\uDFFF]')
+    # mytext = u'<some string containing 4-byte chars>'
+    text = highpoints.sub(u'\u25FD', text)
+
+    text = ''.join(ch for ch in text if ch.isalnum() or ' ')
+
+    print '\n\n'
+    print text.encode('utf-8')
+    print '\n'
+    print str(analysis)
+    print "Favorites: %d" % (tweet['favorite_count'])
+    print "Retweets: %d" % (tweet['retweet_count'])
+    print "Words: %d" % (len(text.split()))
+    print "Word Length Avg: %f" % (sum([len(w) for w in text.split()]) / len(text.split()))
+
+    letters = ' '.join([' '.join(c) for c in text.encode('utf-8').split()])
+
+    fdist = nltk.FreqDist(letters)
+    
+    print "Most common: "
+    print fdist.plot(50,cumulative=False)
+        
 
 if __name__ == "__main__":
     #^This should be the first thing that is checked in the program
@@ -138,9 +181,10 @@ if __name__ == "__main__":
     from pprint import PrettyPrinter
     import json
     import sys
+    import string
     #^default imports that should come with python
 
-    Requirements = ['tweepy','TwitterSearch','python-twitter','scikit-learn', 'numpy', 'matplotlib']#add import requirements here
+    Requirements = ['nltk', 'tweepy','TwitterSearch','python-twitter','scikit-learn', 'numpy', 'matplotlib']#add import requirements here
 
     imported = False #Import flag to make sure things are import correctly
     installed = False #Installed flag to make sure things are installed
@@ -156,6 +200,8 @@ if __name__ == "__main__":
             import numpy as np
             from sklearn import datasets, linear_model
             import twitter
+            import twitter.parse_tweet
+            import nltk
             #put what you want imported and stuff here
             #MAKE SURE TO ADD TO REQUIREMENTS
 
