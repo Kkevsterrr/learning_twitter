@@ -143,29 +143,40 @@ def main():
     tweet=tw[0]
 
     text = tweet['text']
-    analysis = twitter.parse_tweet.ParseTweet(tweet['user']['name'], text)
-
+    
     try:
-        # UCS-4
-        highpoints = re.compile(u'[\U00010000-\U0010ffff]')
+        # Wide UCS-4 build
+        myre = re.compile(u'['
+            u'\U0001F300-\U0001F64F'
+            u'\U0001F680-\U0001F6FF'
+            u'\u2600-\u26FF\u2700-\u27BF]+', 
+            re.UNICODE)
     except re.error:
-        # UCS-2
-        highpoints = re.compile(u'[\uD800-\uDBFF][\uDC00-\uDFFF]')
-    # mytext = u'<some string containing 4-byte chars>'
-    text = highpoints.sub(u'\u25FD', text)
+        # Narrow UCS-2 build
+        myre = re.compile(u'('
+            u'\ud83c[\udf00-\udfff]|'
+            u'\ud83d[\udc00-\ude4f\ude80-\udeff]|'
+            u'[\u2600-\u26FF\u2700-\u27BF])+', 
+            re.UNICODE)
+    
+    text = ''.join([ud.name(char) if myre.sub('',char) == '' else char for char in text])
+        
+    print text
+    
+    analysis = twitter.parse_tweet.ParseTweet(tweet['user']['name'], text)
 
     text = ''.join(ch for ch in text if ch.isalnum() or ' ')
 
     print '\n\n'
     print text.encode('utf-8')
     print '\n'
-    print str(analysis)
+    for i in str(analysis).split(', '):print i
     print "Favorites: %d" % (tweet['favorite_count'])
     print "Retweets: %d" % (tweet['retweet_count'])
     print "Words: %d" % (len(text.split()))
     print "Word Length Avg: %f" % (sum([len(w) for w in text.split()]) / len(text.split()))
 
-    letters = ' '.join([' '.join(c) for c in text.encode('utf-8').split()])
+    letters = ' '.join([' '.join(c) for c in text.split()])
 
     fdist = nltk.FreqDist(letters)
     
@@ -182,6 +193,7 @@ if __name__ == "__main__":
     import json
     import sys
     import string
+    import unicodedata as ud
     #^default imports that should come with python
 
     Requirements = ['nltk', 'tweepy','TwitterSearch','python-twitter','scikit-learn', 'numpy', 'matplotlib']#add import requirements here
